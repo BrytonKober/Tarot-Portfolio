@@ -9,7 +9,7 @@ const resumeData = {
   contact: {
     email: "brytonckober@gmail.com",
     phone: "(208) 447-6183",
-    location: "Philadelphia, PA (Relocating)"
+    location: "Philadelphia, PA"
   },
   summary: "Omnichannel Marketplace Manager with 4+ years of experience owning and scaling revenue across Walmart, Amazon, and Shopify, including launching Walmart from $0 to $120K+ in under six months with a $1M annualized run rate and managing a $22.7M Amazon business. Expert in catalog health, compliance, and marketplace operations that directly impact Buy Box, conversion, and margin, with a track record of turning complex, broken catalogs into high-performing growth engines.",
   skills: [
