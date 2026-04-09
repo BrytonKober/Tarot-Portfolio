@@ -11,7 +11,7 @@ const resumeData = {
     phone: "(208) 447-6183",
     location: "Philadelphia, PA (Relocating)"
   },
-  summary: "Omnichannel Marketplace Manager with 4+ years of experience owning and scaling revenue across Walmart, Amazon, and Shopify, including launching Walmart from $0 to $120K+ in under six months with a $1M annualized run rate and managing a $2.27M Amazon business. Expert in catalog health, compliance, and marketplace operations that directly impact Buy Box, conversion, and margin, with a track record of turning complex, broken catalogs into high-performing growth engines.",
+  summary: "Omnichannel Marketplace Manager with 4+ years of experience owning and scaling revenue across Walmart, Amazon, and Shopify, including launching Walmart from $0 to $120K+ in under six months with a $1M annualized run rate and managing a $22.7M Amazon business. Expert in catalog health, compliance, and marketplace operations that directly impact Buy Box, conversion, and margin, with a track record of turning complex, broken catalogs into high-performing growth engines.",
   skills: [
     "Marketplace Revenue Management", "Omnichannel Merchandising", "Platform Integrations",
     "Catalog & Listing Health", "Pricing & Promotion Optimization", "Operational Scalability",
@@ -39,7 +39,7 @@ const resumeData = {
       role: "Ecommerce Specialist",
       date: "2024 - 2025",
       bullets: [
-        "Owned Amazon USA operations generating $2.27M in annual revenue, managing pricing, catalog, inventory, promotions, and fulfillment across a multi-thousand-SKU portfolio.",
+        "Owned Amazon USA operations generating $22.7M in annual revenue, managing pricing, catalog, inventory, promotions, and fulfillment across a multi-thousand-SKU portfolio.",
         "Operated both FBA and FBM channels to maintain high Buy Box coverage, fast delivery promises, and optimized contribution margin across thousands of live listings.",
         "Managed Amazon Canada and cross-border catalog synchronization, keeping hundreds to thousands of listings compliant and aligned across regions to prevent revenue-blocking discrepancies.",
         "Executed Deals, Lightning Deals, and promotional campaigns that drove traffic spikes, sell-through, and improved category rank during peak promotional periods.",
