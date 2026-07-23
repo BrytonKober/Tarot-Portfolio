@@ -1,471 +1,369 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Wand2, Crown, Rocket, BookOpen, Star, Globe, X, Sparkles, Shuffle } from 'lucide-react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { caseStudies, contact, experience, metrics, nav, skillGroups } from './content';
 
-// Data
-const resumeData = {
-  name: "Bryton C. Kober",
-  title: "Omnichannel Marketplace Manager",
-  contact: {
-    email: "brytonckober@gmail.com",
-    phone: "(208) 447-6183",
-    location: "Philadelphia, PA"
+const pageMeta: Record<string, { title: string; description: string }> = {
+  '/': {
+    title: 'Ecommerce & Digital Operations Leader | Bryton C. Kober',
+    description: 'Bryton C. Kober turns complex digital operations, product data, and marketplace processes into organized, scalable systems.',
   },
-  summary: "Omnichannel Marketplace Manager with 4+ years of experience owning and scaling revenue across Walmart, Amazon, and Shopify, including launching Walmart from $0 to $120K+ in under six months with a $1M annualized run rate and managing a $22.7M Amazon business. Expert in catalog health, compliance, and marketplace operations that directly impact Buy Box, conversion, and margin, with a track record of turning complex, broken catalogs into high-performing growth engines.",
-  skills: [
-    "Marketplace Revenue Management", "Omnichannel Merchandising", "Platform Integrations",
-    "Catalog & Listing Health", "Pricing & Promotion Optimization", "Operational Scalability",
-    "Buy Box & Conversion Optimization", "Revenue & Growth Analytics", "Cross-Functional Execution",
-    "Walmart Seller Center", "Amazon Seller Central", "Shopify Plus / D2C", "Listing Compliance",
-    "Marketplace Search & Ads", "Inventory & Fulfillment", "Revenue Forecasting", "Financial Modeling",
-    "Excel", "GA4 & Attribution", "APIs", "CRM", "HubSpot", "Salesforce", "AI Automation", "OpenAI", "Walmart Connect"
-  ],
-  experience: [
-    {
-      company: "The Rag Company",
-      role: "Walmart Marketplace Manager",
-      date: "2025 - Present",
-      bullets: [
-        "Launched and scaled Walmart Marketplace from $0 to $120K+ in revenue in under six months, achieving a $1M+ annualized run rate through catalog expansion, pricing optimization, and promotion execution.",
-        "Own full P&L performance across Walmart, managing revenue, margin, pricing, promotions, and advertising for a multi-thousand-SKU catalog generating six-figure monthly sales volume.",
-        "Maintain catalog health across thousands of active SKUs, keeping Buy Box eligibility above target thresholds and minimizing suppressions that would otherwise block significant portions of daily revenue.",
-        "Drive promotional performance through Walmart Deals, Rollbacks, and featured offers, increasing traffic, sell-through, and category visibility while protecting contribution margin.",
-        "Resolve dozens of high-impact catalog and compliance defects each month, including parent-child errors, variation mismatches, and attribute conflicts that directly affect listing eligibility and sales velocity.",
-        "Built scalable operating processes for pricing, promotions, catalog updates, and feed management that support continued growth toward a $1M+ annual revenue channel."
-      ]
-    },
-    {
-      company: "The Rag Company",
-      role: "Ecommerce Specialist",
-      date: "2024 - 2025",
-      bullets: [
-        "Owned Amazon USA operations generating $22.7M in annual revenue, managing pricing, catalog, inventory, promotions, and fulfillment across a multi-thousand-SKU portfolio.",
-        "Operated both FBA and FBM channels to maintain high Buy Box coverage, fast delivery promises, and optimized contribution margin across thousands of live listings.",
-        "Managed Amazon Canada and cross-border catalog synchronization, keeping hundreds to thousands of listings compliant and aligned across regions to prevent revenue-blocking discrepancies.",
-        "Executed Deals, Lightning Deals, and promotional campaigns that drove traffic spikes, sell-through, and improved category rank during peak promotional periods.",
-        "Built and optimized A+ Content and product detail pages across a large catalog to increase conversion rate, brand consistency, and merchandising effectiveness.",
-        "Resolved high-volume catalog and compliance defects including variation errors, suppressed listings, and brand conflicts that would otherwise block or limit six- and seven-figure revenue streams."
-      ]
-    },
-    {
-      company: "Erbellum formerly Broomstick Co",
-      role: "Ecommerce Manager",
-      date: "2022 - 2024",
-      bullets: [
-        "Built and operated a D2C e-commerce business from the ground up, owning product catalog, pricing, inventory, fulfillment, and customer experience.",
-        "Manage Shopify Plus, payments, shipping, and product data to support nationwide sales across all 50 U.S. states.",
-        "Develop and maintain scalable product, labeling, and compliance systems to support growth across new SKUs and sales channels."
-      ]
-    },
-    {
-      company: "Thrive Web Designs",
-      role: "Web Developer",
-      date: "2022 - 2022",
-      bullets: []
-    },
-    {
-      company: "Target",
-      role: "Guest Service Specialist",
-      date: "2018 - 2022",
-      bullets: []
-    }
-  ],
-  education: {
-    school: "Boise State University",
-    degree: "B.S. in Physics",
-    date: "2017 - 2022"
-  }
+  '/case-studies': {
+    title: 'Case Studies | Bryton C. Kober',
+    description: 'Marketplace growth, PIM implementation, product-data governance, analytics, accessibility, and ecommerce operations case studies.',
+  },
+  '/experience': {
+    title: 'Experience | Bryton C. Kober',
+    description: 'Experience across marketplace operations, ecommerce, systems implementation, entrepreneurship, and web delivery.',
+  },
+  '/about': {
+    title: 'About | Bryton C. Kober',
+    description: 'Ecommerce and digital-operations leader with a background in physics, web development, analytics, and entrepreneurship.',
+  },
+  '/resume': {
+    title: 'Resume | Bryton C. Kober',
+    description: 'HTML and downloadable resumes for ecommerce, omnichannel, implementation, project, and digital-operations opportunities.',
+  },
+  '/contact': {
+    title: 'Contact | Bryton C. Kober',
+    description: 'Contact Bryton Kober about ecommerce, marketplace, implementation, product-data, and digital-operations opportunities.',
+  },
 };
 
-const cards = [
-  {
-    id: 'magician',
-    title: 'The Magician',
-    subtitle: 'About Me',
-    icon: Wand2,
-    reading: "The Magician reveals a master of resources. Just as the Magician turns elements into reality, I transform broken catalogs into high-performing growth engines. You have drawn the card of execution and manifestation—hire me to turn your marketplace potential into tangible revenue.",
-    content: (
-      <div className="space-y-4">
-        <h3 className="text-3xl font-serif text-amber-400 border-b border-amber-900/50 pb-2">The Magician</h3>
-        <p className="text-amber-100/90 leading-relaxed text-lg">{resumeData.summary}</p>
+function SiteHeader() {
+  return (
+    <header className="site-header">
+      <div className="shell header-inner">
+        <a className="monogram" href="/" aria-label="Bryton C. Kober home">
+          <span className="monogram-mark" aria-hidden="true">B</span>
+          <span>Bryton C. Kober</span>
+        </a>
+        <nav aria-label="Main navigation">
+          <ul className="nav-list">
+            {nav.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
       </div>
-    )
-  },
-  {
-    id: 'emperor',
-    title: 'The Emperor',
-    subtitle: 'The Rag Company',
-    icon: Crown,
-    reading: "The Emperor signifies structure, authority, and strategic control. Drawing this card suggests your team needs someone who can take ownership of a P&L and build scalable operating processes. I bring the discipline needed to manage multi-thousand-SKU catalogs and drive seven-figure growth.",
-    content: (
-      <div className="space-y-6">
-        <h3 className="text-3xl font-serif text-amber-400 border-b border-amber-900/50 pb-2">The Emperor</h3>
-        {resumeData.experience.slice(0, 2).map((exp, i) => (
-          <div key={i} className="space-y-2">
-            <div className="flex justify-between items-start flex-wrap gap-2">
-              <h4 className="text-xl font-medium text-amber-200">{exp.role}</h4>
-              <span className="text-sm text-amber-500/80 font-mono">{exp.date}</span>
-            </div>
-            <p className="text-sm text-amber-400/60 uppercase tracking-wider">{exp.company}</p>
-            <ul className="list-disc list-outside ml-4 space-y-2 text-sm text-amber-100/80">
-              {exp.bullets.map((b, j) => <li key={j} className="pl-1">{b}</li>)}
-            </ul>
+    </header>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <div className="shell footer-grid">
+        <div>
+          <p className="eyebrow">The next chapter</p>
+          <h2>Let’s build something that scales.</h2>
+          <p>Based in Boise and relocating to Philadelphia. Open to ecommerce, implementation, product-data, and digital-operations roles.</p>
+        </div>
+        <div className="footer-actions">
+          <a className="button primary" href="/contact">Start a conversation <span aria-hidden="true">↗</span></a>
+          <a href={contact.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+          <a href={`mailto:${contact.email}`}>{contact.email}</a>
+        </div>
+      </div>
+      <div className="shell footer-base">
+        <span>© {new Date().getFullYear()} Bryton C. Kober</span>
+        <span>Turning complexity into structure.</span>
+      </div>
+    </footer>
+  );
+}
+
+function PageIntro({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
+  return (
+    <section className="page-intro shell">
+      <div className="intro-orbit" aria-hidden="true"><span>✦</span></div>
+      <p className="eyebrow">{eyebrow}</p>
+      <h1>{title}</h1>
+      <p className="lede">{body}</p>
+    </section>
+  );
+}
+
+function CardGlyph({ numeral, compact = false }: { numeral: string; compact?: boolean }) {
+  return (
+    <div className={`card-glyph ${compact ? 'compact' : ''}`} aria-hidden="true">
+      <span className="corner top">{numeral}</span>
+      <span className="glyph-star">✦</span>
+      <span className="glyph-path" />
+      <span className="glyph-moon">◐</span>
+      <span className="corner bottom">{numeral}</span>
+    </div>
+  );
+}
+
+function TagList({ items }: { items: string[] }) {
+  return <ul className="tag-list">{items.map((item) => <li key={item}>{item}</li>)}</ul>;
+}
+
+function HomePage() {
+  const selected = [caseStudies[0], caseStudies[1], caseStudies[7]];
+  return (
+    <>
+      <section className="hero shell">
+        <div className="hero-copy">
+          <div className="availability"><span aria-hidden="true" /> Relocating to Philadelphia · Open to opportunities</div>
+          <p className="eyebrow">Bryton C. Kober · Ecommerce & Digital Operations</p>
+          <h1>Turning complex digital operations into <em>scalable systems.</em></h1>
+          <p className="hero-lede">I lead ecommerce, marketplace, product-data, and implementation work that turns fragmented processes into clear, measurable operations.</p>
+          <div className="button-row">
+            <a className="button primary" href="/case-studies">Explore case studies <span aria-hidden="true">↗</span></a>
+            <a className="button secondary" href="/resumes/bryton-kober-ecommerce-omnichannel-manager.pdf" download>Download resume <span aria-hidden="true">↓</span></a>
           </div>
-        ))}
-      </div>
-    )
-  },
-  {
-    id: 'chariot',
-    title: 'The Chariot',
-    subtitle: 'Previous Quests',
-    icon: Rocket,
-    reading: "The Chariot represents overcoming obstacles through determination and focus. This card appears when you need someone who can navigate complex cross-border synchronizations and resolve high-volume compliance defects. I drive projects forward, no matter the roadblocks.",
-    content: (
-      <div className="space-y-6">
-        <h3 className="text-3xl font-serif text-amber-400 border-b border-amber-900/50 pb-2">The Chariot</h3>
-        {resumeData.experience.slice(2).map((exp, i) => (
-          <div key={i} className="space-y-2">
-            <div className="flex justify-between items-start flex-wrap gap-2">
-              <h4 className="text-xl font-medium text-amber-200">{exp.role}</h4>
-              <span className="text-sm text-amber-500/80 font-mono">{exp.date}</span>
+          <a className="text-link" href={contact.linkedin} target="_blank" rel="noreferrer">Connect on LinkedIn <span aria-hidden="true">↗</span></a>
+        </div>
+        <div className="hero-card-wrap">
+          <div className="hero-card">
+            <div className="card-number">XXI</div>
+            <CardGlyph numeral="XXI" />
+            <div className="hero-card-copy">
+              <span>The World</span>
+              <strong>Systems in motion</strong>
+              <p>Marketplace · Product data · Implementation · Analytics</p>
             </div>
-            <p className="text-sm text-amber-400/60 uppercase tracking-wider">{exp.company}</p>
-            {exp.bullets.length > 0 && (
-              <ul className="list-disc list-outside ml-4 space-y-2 text-sm text-amber-100/80">
-                {exp.bullets.map((b, j) => <li key={j} className="pl-1">{b}</li>)}
-              </ul>
-            )}
           </div>
+          <div className="orbit orbit-one" aria-hidden="true" />
+          <div className="orbit orbit-two" aria-hidden="true" />
+        </div>
+      </section>
+
+      <section className="metrics-band" aria-label="Selected career results">
+        <div className="shell metrics-grid">
+          {metrics.map((metric) => <div className="metric" key={metric.value}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}
+        </div>
+      </section>
+
+      <section className="section shell split-heading">
+        <div><p className="eyebrow">The operating system</p><h2>Where strategy becomes execution.</h2></div>
+        <p>I connect the systems, data, workflows, and people behind digital commerce. The result is clearer ownership, healthier catalogs, better reporting, and operations that can grow without becoming chaotic.</p>
+      </section>
+
+      <section className="shell capability-grid" aria-label="Core capabilities">
+        {skillGroups.map((group, index) => (
+          <article className="capability-card" key={group.title}>
+            <span className="card-index">0{index + 1}</span>
+            <p className="arcana-label">{group.arcana}</p>
+            <h3>{group.title}</h3>
+            <TagList items={group.skills.slice(0, 6)} />
+          </article>
         ))}
-      </div>
-    )
-  },
-  {
-    id: 'hierophant',
-    title: 'The Hierophant',
-    subtitle: 'Skills & Mastery',
-    icon: BookOpen,
-    reading: "The Hierophant is the keeper of specialized knowledge and systems. You have drawn the card of expertise. From Amazon Seller Central to Shopify Plus, and from GA4 to Financial Modeling, I possess the deep technical knowledge required to optimize your omnichannel strategy.",
-    content: (
-      <div className="space-y-6">
-        <h3 className="text-3xl font-serif text-amber-400 border-b border-amber-900/50 pb-2">The Hierophant</h3>
-        <div className="flex flex-wrap gap-3">
-          {resumeData.skills.map((skill, i) => (
-            <span key={i} className="px-4 py-2 bg-amber-900/30 border border-amber-700/50 rounded-full text-sm text-amber-200 shadow-inner">
-              {skill}
-            </span>
+      </section>
+
+      <section className="section shell">
+        <div className="section-heading row-heading">
+          <div><p className="eyebrow">Selected work</p><h2>Case studies in transformation.</h2></div>
+          <a className="text-link" href="/case-studies">View all case studies <span aria-hidden="true">→</span></a>
+        </div>
+        <div className="case-preview-grid">
+          {selected.map((study) => (
+            <a className="case-preview" href={`/case-studies#${study.slug}`} key={study.slug}>
+              <CardGlyph numeral={study.numeral} compact />
+              <div><p className="arcana-label">{study.arcana}</p><h3>{study.title}</h3><p>{study.overview}</p><strong>{study.metric}</strong></div>
+              <span className="case-arrow" aria-hidden="true">↗</span>
+            </a>
           ))}
         </div>
-      </div>
-    )
-  },
-  {
-    id: 'star',
-    title: 'The Star',
-    subtitle: 'Education',
-    icon: Star,
-    reading: "The Star brings hope, inspiration, and analytical clarity. With a B.S. in Physics, my foundation is built on rigorous problem-solving and data analysis. Drawing this card means your team will benefit from a highly analytical mind capable of deciphering complex marketplace algorithms.",
-    content: (
-      <div className="space-y-6">
-        <h3 className="text-3xl font-serif text-amber-400 border-b border-amber-900/50 pb-2">The Star</h3>
-        <div className="bg-amber-900/20 p-6 rounded-xl border border-amber-800/40">
-          <h4 className="text-2xl font-medium text-amber-200">{resumeData.education.degree}</h4>
-          <p className="text-lg text-amber-400/80 mt-1">{resumeData.education.school}</p>
-          <p className="text-md text-amber-500/80 font-mono mt-4">{resumeData.education.date}</p>
+      </section>
+
+      <section className="section shell result-story">
+        <div className="result-emblem" aria-hidden="true"><span>✦</span><b>28+</b><small>projects</small></div>
+        <div>
+          <p className="eyebrow">The throughline</p>
+          <h2>From investigation to implementation.</h2>
+          <p>Across marketplace growth, PIM implementation, accessibility, reporting, catalog governance, and entrepreneurship, my work follows the same pattern: understand the system, find the leverage point, organize the work, and carry it through.</p>
+          <a className="button secondary" href="/experience">Explore my experience <span aria-hidden="true">→</span></a>
         </div>
-      </div>
-    )
-  },
-  {
-    id: 'world',
-    title: 'The World',
-    subtitle: 'Contact',
-    icon: Globe,
-    reading: "The World represents successful completion and new beginnings. You have reached the end of your search. Drawing this card is a sign that it's time to connect. Reach out, and let's begin a successful new cycle together.",
-    content: (
-      <div className="space-y-6">
-        <h3 className="text-3xl font-serif text-amber-400 border-b border-amber-900/50 pb-2">The World</h3>
-        <div className="space-y-6 bg-amber-900/20 p-6 rounded-xl border border-amber-800/40">
-          <p className="text-amber-200 flex items-center gap-4 text-lg">
-            <span className="text-amber-500/80 uppercase text-sm tracking-widest w-24">Email</span>
-            <a href={`mailto:${resumeData.contact.email}`} className="hover:text-amber-400 transition-colors">{resumeData.contact.email}</a>
-          </p>
-          <p className="text-amber-200 flex items-center gap-4 text-lg">
-            <span className="text-amber-500/80 uppercase text-sm tracking-widest w-24">Phone</span>
-            <span>{resumeData.contact.phone}</span>
-          </p>
-          <p className="text-amber-200 flex items-center gap-4 text-lg">
-            <span className="text-amber-500/80 uppercase text-sm tracking-widest w-24">Location</span>
-            <span>{resumeData.contact.location}</span>
-          </p>
+      </section>
+    </>
+  );
+}
+
+function CaseStudiesPage() {
+  return (
+    <>
+      <PageIntro eyebrow="Case Studies · The Major Work" title="Complex operations, made legible." body="Nine evidence-based stories about how I analyze fragmented systems, align stakeholders, implement practical solutions, and carry high-impact work through delivery." />
+      <section className="shell studies-index" aria-label="Case study index">
+        {caseStudies.map((study, index) => <a href={`#${study.slug}`} key={study.slug}><span>{String(index + 1).padStart(2, '0')}</span>{study.title}</a>)}
+      </section>
+      <section className="shell studies-list">
+        {caseStudies.map((study, index) => (
+          <article className="study" id={study.slug} key={study.slug}>
+            <aside className="study-symbol"><CardGlyph numeral={study.numeral} /><p>{study.arcana}</p></aside>
+            <div className="study-content">
+              <header className="study-header">
+                <div><p className="eyebrow">Case {String(index + 1).padStart(2, '0')} · {study.arcana}</p><h2>{study.title}</h2></div>
+                {study.metric && <strong>{study.metric}</strong>}
+              </header>
+              <p className="study-overview">{study.overview}</p>
+              <ol className="narrative" aria-label="Challenge to result narrative">
+                <li><span>Challenge</span><p>{study.challenge}</p></li>
+                <li><span>Analysis</span><p>{study.analysis}</p></li>
+                <li><span>Action</span><p>{study.action}</p></li>
+                <li><span>Implementation</span><p>{study.implementation}</p></li>
+                <li><span>Result</span><p>{study.result}</p></li>
+              </ol>
+              <details className="study-details">
+                <summary>Project details <span aria-hidden="true">+</span></summary>
+                <div className="detail-grid">
+                  <Detail title="My role"><p>{study.role}</p></Detail>
+                  <Detail title="Goals"><List items={study.goals} /></Detail>
+                  <Detail title="Stakeholders"><List items={study.stakeholders} /></Detail>
+                  <Detail title="Constraints"><List items={study.constraints} /></Detail>
+                  <Detail title="Tools & platforms"><TagList items={study.tools} /></Detail>
+                  <Detail title="Challenges & risks"><List items={study.risks} /></Detail>
+                </div>
+              </details>
+              <div className="demonstrates"><span aria-hidden="true">✦</span><div><h3>What this demonstrates</h3><p>{study.demonstrates}</p><TagList items={study.skills} /></div></div>
+            </div>
+          </article>
+        ))}
+      </section>
+    </>
+  );
+}
+
+function Detail({ title, children }: { title: string; children: ReactNode }) {
+  return <div><h3>{title}</h3>{children}</div>;
+}
+
+function List({ items }: { items: string[] }) {
+  return <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>;
+}
+
+function ExperiencePage() {
+  return (
+    <>
+      <PageIntro eyebrow="Experience · The Path" title="A career built across systems, commerce, and delivery." body="From customer operations and responsive web delivery to founding a DTC brand and managing marketplace growth, each role added a new layer to how I understand digital operations." />
+      <section className="shell career-timeline">
+        {experience.map((item, index) => (
+          <article className="timeline-item" key={`${item.company}-${item.role}`}>
+            <div className="timeline-marker" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span></div>
+            <div className="timeline-date">{item.dates}</div>
+            <div className="timeline-body">
+              <p className="eyebrow">{item.company}</p><h2>{item.role}</h2><p className="timeline-summary">{item.summary}</p>
+              {item.bullets.length > 0 && <ul className="accomplishment-list">{item.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
+              <TagList items={item.tools} />
+            </div>
+          </article>
+        ))}
+        <article className="timeline-item education-item">
+          <div className="timeline-marker" aria-hidden="true"><span>BS</span></div><div className="timeline-date">2017 – 2022</div>
+          <div className="timeline-body"><p className="eyebrow">Boise State University</p><h2>B.S. in Physics</h2><p className="timeline-summary">A quantitative foundation in analytical reasoning, applied mathematics, experimentation, and complex problem-solving.</p><TagList items={['Physics', 'Mathematics', 'Analysis', 'Systems thinking']} /></div>
+        </article>
+      </section>
+    </>
+  );
+}
+
+function AboutPage() {
+  return (
+    <>
+      <PageIntro eyebrow="About · The Hermit" title="I look for the system behind the symptoms." body="My work sits at the intersection of ecommerce, product data, implementation, analytics, and the people who make those systems function." />
+      <section className="shell about-layout">
+        <aside className="about-pullquote"><span aria-hidden="true">✦</span><blockquote>“The most useful system is the one people can understand, trust, and keep using.”</blockquote><p>Based in Boise · Relocating to Philadelphia</p></aside>
+        <div className="about-copy">
+          <p className="dropcap">I’ve always been drawn to the point where a complicated situation starts to make sense. Sometimes that means tracing a marketplace issue back to a catalog conflict. Sometimes it means turning departmental product data into a shared PIM workflow. Sometimes it means giving leadership one clear view of revenue, margin, and operational health.</p>
+          <p>My degree in physics gave me a strong quantitative foundation and an appreciation for models, evidence, and disciplined investigation. Applied mathematics and scientific problem-solving shaped how I break down complex questions, but my operating approach has been built through years of practical delivery: responsive web projects, marketplace operations, product-data systems, reporting infrastructure, and cross-functional implementation.</p>
+          <p>That combination matters. I can move comfortably between a business goal, a technical constraint, a catalog defect, a reporting question, and a stakeholder conversation. I’m technical enough to understand systems and data, commercially aware enough to prioritize what affects revenue and customers, and organized enough to carry the work through implementation.</p>
+          <h2>Builder, operator, translator.</h2>
+          <p>Founding Erbellum taught me the full weight of operating a digital business—from product sourcing and launches to inventory, fulfillment, brand experience, and customer trust. Scaling and transitioning that business reinforced something I still believe: good operations should be transferable. The process cannot live only in one person’s head.</p>
+          <p>Today, I’m most energized by work that brings order to fragmented digital operations: marketplace growth, PIM and product-data governance, platform implementation, process design, reporting, and product operations.</p>
+          <div className="about-next">
+            <p className="eyebrow">Next destination</p><h2>Philadelphia, within the next six months.</h2>
+            <p>I’m currently based in Boise and targeting roles that support a relocation to Philadelphia. I’m open to opportunities with retailers, technology companies, consulting firms, and enterprise teams that need a thoughtful operator who can connect commerce, data, systems, and delivery.</p>
+            <div className="button-row"><a className="button primary" href="/contact">Start a conversation <span aria-hidden="true">↗</span></a><a className="button secondary" href="/resume">View resume <span aria-hidden="true">→</span></a></div>
+          </div>
         </div>
-      </div>
-    )
+      </section>
+    </>
+  );
+}
+
+function ResumePage() {
+  return (
+    <>
+      <PageIntro eyebrow="Resume · The Record" title="Two lenses on one operating career." body="Choose the version closest to the opportunity, or read the combined, recruiter-friendly resume below." />
+      <section className="shell resume-downloads">
+        <ResumeDownload arcana="Marketplace & commerce" title="Ecommerce & Omnichannel Resume" body="Best for marketplace, ecommerce, catalog, merchandising, and digital-commerce operations roles." file="/resumes/bryton-kober-ecommerce-omnichannel-manager.pdf" />
+        <ResumeDownload arcana="Systems & delivery" title="Implementation & Project Resume" body="Best for implementation, business systems, digital operations, technical project, and platform roles." file="/resumes/bryton-kober-digital-project-manager.pdf" />
+      </section>
+      <article className="shell html-resume">
+        <header className="resume-header"><div><p className="eyebrow">Bryton C. Kober</p><h1>Ecommerce & Digital Operations Leader</h1></div><div><a href={`mailto:${contact.email}`}>{contact.email}</a><a href={contact.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><span>Boise → Philadelphia</span></div></header>
+        <section className="resume-summary"><h2>Profile</h2><p>Ecommerce and digital-operations leader with 5+ years of experience across marketplace operations, systems implementation, product-data governance, analytics, and cross-functional delivery. Supported a $38M+ omnichannel business, scaled Walmart Marketplace from $0 to a $1M+ annual run rate in under six months, delivered 28+ digital and operational projects, and founded a DTC business generating $200K in revenue.</p></section>
+        <section><h2>Experience</h2>{experience.map((item) => <div className="resume-role" key={`${item.company}-${item.role}`}><div className="resume-role-head"><div><h3>{item.role}</h3><p>{item.company}</p></div><strong>{item.dates}</strong></div>{item.bullets.length > 0 ? <List items={item.bullets} /> : <p>{item.summary}</p>}</div>)}</section>
+        <section><h2>Skills</h2><div className="resume-skills">{skillGroups.map((group) => <div key={group.title}><h3>{group.title}</h3><TagList items={group.skills} /></div>)}</div></section>
+        <section><h2>Education</h2><div className="resume-role-head"><div><h3>B.S. in Physics</h3><p>Boise State University</p></div><strong>2017 – 2022</strong></div></section>
+      </article>
+    </>
+  );
+}
+
+function ResumeDownload({ arcana, title, body, file }: { arcana: string; title: string; body: string; file: string }) {
+  return <article><p className="arcana-label">{arcana}</p><h2>{title}</h2><p>{body}</p><div className="button-row"><a className="button primary" href={file} target="_blank" rel="noreferrer">Open PDF <span aria-hidden="true">↗</span></a><a className="button secondary" href={file} download>Download <span aria-hidden="true">↓</span></a></div></article>;
+}
+
+function ContactPage() {
+  const [message, setMessage] = useState('');
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    if (data.get('company_website')) return;
+    const name = String(data.get('name') || '');
+    const email = String(data.get('email') || '');
+    const role = String(data.get('role') || '');
+    const note = String(data.get('message') || '');
+    const subject = encodeURIComponent(`Portfolio inquiry${role ? `: ${role}` : ''}`);
+    const body = encodeURIComponent(`Hi Bryton,\n\n${note}\n\nName: ${name}\nEmail: ${email}${role ? `\nRole / company: ${role}` : ''}`);
+    setMessage('Opening your email app with this note prepared.');
+    window.location.href = `mailto:${contact.email}?subject=${subject}&body=${body}`;
   }
-];
+  return (
+    <>
+      <PageIntro eyebrow="Contact · The Next Chapter" title="Bring me the complicated part." body="I’m open to ecommerce, omnichannel, implementation, product-data, platform, and digital-operations opportunities that support my relocation to Philadelphia." />
+      <section className="shell contact-layout">
+        <aside className="contact-aside">
+          <p className="eyebrow">Direct lines</p><h2>Let’s compare notes.</h2><p>If your team is scaling a marketplace, implementing a system, organizing product data, or trying to make digital operations more legible, I’d like to hear about it.</p>
+          <dl><div><dt>Email</dt><dd><a href={`mailto:${contact.email}`}>{contact.email}</a></dd></div><div><dt>LinkedIn</dt><dd><a href={contact.linkedin} target="_blank" rel="noreferrer">linkedin.com/in/bryton-k ↗</a></dd></div><div><dt>Location</dt><dd>Boise, Idaho → Philadelphia, Pennsylvania</dd></div><div><dt>Resume</dt><dd><a href="/resumes/bryton-kober-ecommerce-omnichannel-manager.pdf" download>Download PDF ↓</a></dd></div></dl>
+        </aside>
+        <div><p className="eyebrow">Send a note</p><form className="contact-form" onSubmit={submit}>
+          <div className="honeypot" aria-hidden="true"><label>Company website<input name="company_website" tabIndex={-1} autoComplete="off" /></label></div>
+          <div className="field-row"><label>Name<input name="name" type="text" autoComplete="name" required /></label><label>Email<input name="email" type="email" autoComplete="email" required /></label></div>
+          <label>Role or company <span>(optional)</span><input name="role" type="text" autoComplete="organization" /></label>
+          <label>What would you like to discuss?<textarea name="message" rows={6} required /></label>
+          <button className="button primary" type="submit">Prepare email <span aria-hidden="true">↗</span></button>
+          <p className="form-note" aria-live="polite">{message || 'This form prepares a message in your email app. It does not store your information.'}</p>
+        </form></div>
+      </section>
+    </>
+  );
+}
+
+function CurrentPage({ route }: { route: string }) {
+  if (route === '/case-studies') return <CaseStudiesPage />;
+  if (route === '/experience') return <ExperiencePage />;
+  if (route === '/about') return <AboutPage />;
+  if (route === '/resume') return <ResumePage />;
+  if (route === '/contact') return <ContactPage />;
+  return <HomePage />;
+}
 
 export default function App() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isReadingMode, setIsReadingMode] = useState(false);
-  const [drawnCard, setDrawnCard] = useState<typeof cards[0] | null>(null);
-  const [isShuffling, setIsShuffling] = useState(false);
-
-  // Handle the random draw
-  const drawCard = () => {
-    setIsShuffling(true);
-    setDrawnCard(null);
-    setSelectedId(null);
-    
-    // Simulate shuffling time
-    setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * cards.length);
-      setDrawnCard(cards[randomIndex]);
-      setIsShuffling(false);
-    }, 1500);
-  };
+  const route = window.location.pathname.replace(/\/$/, '') || '/';
+  useEffect(() => {
+    const meta = pageMeta[route] || pageMeta['/'];
+    document.title = meta.title;
+    const description = document.querySelector('meta[name="description"]');
+    description?.setAttribute('content', meta.description);
+  }, [route]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-amber-500/30 overflow-x-hidden relative">
-      {/* Mystical Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(40,20,60,0.8)_0%,rgba(10,5,20,1)_100%)]" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-screen" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-600/10 rounded-full blur-[120px]" />
+    <>
+      <a className="skip-link" href="#main">Skip to content</a>
+      <div className="site-frame">
+        <SiteHeader />
+        <main id="main"><CurrentPage route={route} /></main>
+        <SiteFooter />
       </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12 md:py-20">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center mb-12 space-y-4"
-        >
-          <div className="inline-flex items-center justify-center gap-2 text-amber-500 mb-2">
-            <Sparkles className="w-5 h-5" />
-            <span className="uppercase tracking-[0.3em] text-xs font-semibold">Interactive Portfolio</span>
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <h1 className="text-5xl md:text-7xl font-serif text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-amber-600 drop-shadow-sm">
-            {resumeData.name}
-          </h1>
-          <p className="text-xl md:text-2xl text-amber-200/80 font-light tracking-wide">
-            {resumeData.title}
-          </p>
-        </motion.div>
-
-        {/* Mode Toggle & Draw Button */}
-        <div className="flex flex-col items-center justify-center gap-6 mb-16">
-          <div className="flex items-center gap-4 bg-slate-900/50 p-1.5 rounded-full border border-amber-900/30 backdrop-blur-sm">
-            <button
-              onClick={() => { setIsReadingMode(false); setDrawnCard(null); }}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${!isReadingMode ? 'bg-amber-600/20 text-amber-300 border border-amber-500/30 shadow-[0_0_15px_rgba(217,119,6,0.2)]' : 'text-slate-400 hover:text-amber-200'}`}
-            >
-              View Full Spread
-            </button>
-            <button
-              onClick={() => setIsReadingMode(true)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isReadingMode ? 'bg-amber-600/20 text-amber-300 border border-amber-500/30 shadow-[0_0_15px_rgba(217,119,6,0.2)]' : 'text-slate-400 hover:text-amber-200'}`}
-            >
-              Get a Reading
-            </button>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {isReadingMode && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="flex flex-col items-center gap-4"
-              >
-                <p className="text-amber-200/70 italic text-center max-w-md">
-                  "Seeker, draw a card to reveal why the fates have brought my resume to your desk today."
-                </p>
-                <button
-                  onClick={drawCard}
-                  disabled={isShuffling}
-                  className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-b from-amber-700 to-amber-900 text-amber-100 rounded-full font-serif text-lg tracking-wider overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(217,119,6,0.4)] disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay" />
-                  <Shuffle className={`w-5 h-5 ${isShuffling ? 'animate-spin' : ''}`} />
-                  {isShuffling ? 'Consulting the Fates...' : 'Draw a Card'}
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Reading Mode View */}
-        <AnimatePresence mode="wait">
-          {isReadingMode && drawnCard && !isShuffling && (
-            <motion.div
-              key="reading-result"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: -20 }}
-              transition={{ type: "spring", duration: 0.8 }}
-              className="max-w-4xl mx-auto flex flex-col md:flex-row gap-8 items-center md:items-start"
-            >
-              {/* The Drawn Card */}
-              <div className="w-full max-w-[300px] shrink-0">
-                <div className="relative w-full aspect-[2/3] rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900 to-slate-950 p-6 flex flex-col items-center justify-center text-center shadow-[0_0_40px_rgba(245,158,11,0.2)] overflow-hidden">
-                  <div className="absolute top-3 left-3 w-4 h-4 border-t border-l border-amber-500/50" />
-                  <div className="absolute top-3 right-3 w-4 h-4 border-t border-r border-amber-500/50" />
-                  <div className="absolute bottom-3 left-3 w-4 h-4 border-b border-l border-amber-500/50" />
-                  <div className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-amber-500/50" />
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay" />
-                  
-                  <div className="mb-6 text-amber-400">
-                    <drawnCard.icon size={80} strokeWidth={1} />
-                  </div>
-                  <h2 className="text-3xl font-serif text-amber-300 mb-2 uppercase tracking-widest">
-                    {drawnCard.title}
-                  </h2>
-                  <p className="text-amber-500/60 font-mono text-sm uppercase tracking-wider">
-                    {drawnCard.subtitle}
-                  </p>
-                </div>
-              </div>
-
-              {/* The Fortune/Reading */}
-              <div className="flex-1 space-y-6 bg-slate-900/50 p-8 rounded-2xl border border-amber-900/50 backdrop-blur-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-                
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-serif text-amber-400 italic">Your Reading:</h3>
-                  <p className="text-lg text-amber-100/90 leading-relaxed font-serif">
-                    {drawnCard.reading}
-                  </p>
-                </div>
-
-                <div className="pt-6 border-t border-amber-900/50 mt-6">
-                  <button
-                    onClick={() => setSelectedId(drawnCard.id)}
-                    className="text-amber-400 hover:text-amber-300 font-medium tracking-wide flex items-center gap-2 transition-colors group"
-                  >
-                    Reveal the details of this card 
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Standard Spread View */}
-        <AnimatePresence mode="wait">
-          {!isReadingMode && (
-            <motion.div 
-              key="standard-spread"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 max-w-5xl mx-auto"
-            >
-              {cards.map((card, index) => (
-                <motion.div
-                  key={card.id}
-                  layoutId={`card-container-${card.id}`}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  onClick={() => setSelectedId(card.id)}
-                  className="group cursor-pointer perspective-1000"
-                >
-                  <motion.div 
-                    className="relative w-full aspect-[2/3] rounded-2xl border-2 border-amber-900/50 bg-gradient-to-br from-slate-900 to-slate-950 p-6 flex flex-col items-center justify-center text-center shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-500 group-hover:border-amber-500/50 group-hover:shadow-[0_0_40px_rgba(245,158,11,0.2)]"
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {/* Card Ornaments */}
-                    <div className="absolute top-3 left-3 w-4 h-4 border-t border-l border-amber-700/50" />
-                    <div className="absolute top-3 right-3 w-4 h-4 border-t border-r border-amber-700/50" />
-                    <div className="absolute bottom-3 left-3 w-4 h-4 border-b border-l border-amber-700/50" />
-                    <div className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-amber-700/50" />
-                    
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay" />
-                    
-                    <motion.div layoutId={`icon-${card.id}`} className="mb-6 text-amber-500/80 group-hover:text-amber-400 transition-colors">
-                      <card.icon size={64} strokeWidth={1} />
-                    </motion.div>
-                    
-                    <motion.h2 layoutId={`title-${card.id}`} className="text-2xl font-serif text-amber-300 mb-2 uppercase tracking-widest">
-                      {card.title}
-                    </motion.h2>
-                    
-                    <motion.p layoutId={`subtitle-${card.id}`} className="text-amber-500/60 font-mono text-sm uppercase tracking-wider">
-                      {card.subtitle}
-                    </motion.p>
-                  </motion.div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Expanded Card Modal (Shared between both modes) */}
-        <AnimatePresence>
-          {selectedId && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedId(null)}
-                className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40"
-              />
-              <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none p-4 md:p-8">
-                {cards.filter(c => c.id === selectedId).map(card => (
-                  <motion.div
-                    key={card.id}
-                    layoutId={`card-container-${card.id}`}
-                    className="relative w-full max-w-2xl max-h-[90vh] bg-slate-900 border border-amber-700/50 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden pointer-events-auto flex flex-col"
-                  >
-                    {/* Modal Header */}
-                    <div className="p-6 border-b border-amber-900/50 bg-slate-950/50 flex justify-between items-center shrink-0">
-                      <div className="flex items-center gap-4">
-                        <motion.div layoutId={`icon-${card.id}`} className="text-amber-500">
-                          <card.icon size={32} strokeWidth={1.5} />
-                        </motion.div>
-                        <div>
-                          <motion.h2 layoutId={`title-${card.id}`} className="text-xl font-serif text-amber-300 uppercase tracking-widest">
-                            {card.title}
-                          </motion.h2>
-                          <motion.p layoutId={`subtitle-${card.id}`} className="text-amber-500/60 font-mono text-xs uppercase tracking-wider">
-                            {card.subtitle}
-                          </motion.p>
-                        </div>
-                      </div>
-                      <button 
-                        onClick={() => setSelectedId(null)}
-                        className="p-2 text-amber-500/60 hover:text-amber-300 hover:bg-amber-900/30 rounded-full transition-colors"
-                      >
-                        <X size={24} />
-                      </button>
-                    </div>
-
-                    {/* Modal Content */}
-                    <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        {card.content}
-                      </motion.div>
-                    </div>
-                    
-                    {/* Decorative bottom edge */}
-                    <div className="h-2 bg-gradient-to-r from-amber-900/20 via-amber-600/40 to-amber-900/20 shrink-0" />
-                  </motion.div>
-                ))}
-              </div>
-            </>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
+    </>
   );
 }
