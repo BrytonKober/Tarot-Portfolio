@@ -1,20 +1,13 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Bryton C. Kober — Professional Portfolio
 
-# Run and deploy your AI Studio app
+A recruiter-focused portfolio for ecommerce, omnichannel, product-data, implementation, and digital-operations roles. Built with React and Vite and deployed through Vercel.
 
-This contains everything you need to run your app locally.
+## Local development
 
-View your app in AI Studio: https://ai.studio/apps/da2ee3c5-bfc7-4b99-afeb-1d0e3194cdb9
+1. Run `npm install`
+2. Run `npm run dev`
+3. Open `http://localhost:3000`
 
-## Run Locally
+## Production
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Run `npm run build`. Vercel publishes the generated `dist` directory and uses `vercel.json` to support the portfolio's client-side routes.
